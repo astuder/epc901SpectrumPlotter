@@ -78,6 +78,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="EPC901Camera.cs" />
     <Compile Include="ConfigFile.cs" />
     <Compile Include="LIBS\ElementDatabase.cs" />
     <Compile Include="LIBS\ElementInfo.cs" />

@@ -25,7 +25,7 @@ namespace SpectrumPlotter
 {
     public partial class MainScreen : Form
     {
-        private SerialPort Port = null;
+        private EPC901Camera Camera = null;
         private Thread MainThread = null;
         private System.Windows.Forms.Timer UpdateTimer = null;
 
@@ -113,7 +113,7 @@ namespace SpectrumPlotter
         {
             PolyfitCalc();
             cmbPorts.Text = Config.SerialPort;
-            txtShPeriod.Text = (Config.ShPeriod * 2).ToString();
+            txtExposure.Text = (Config.Exposure).ToString();
             txtIcgPeriod.Text = (Config.IcgPeriod * 2).ToString();
             chkTrigger.Checked = Config.Trigger;
             txtTriggerDelay.Text = Config.TriggerDelay.ToString();
@@ -364,50 +364,13 @@ namespace SpectrumPlotter
 
         private void btnConnect_Click(object sender, EventArgs e)
         {
-            if (Port == null)
+            if (Camera == null)
             {
                 bool success = false;
                 string message = "";
 
-                try
-                {
-                    Port = new SerialPort(cmbPorts.Text, 500000);
-                    Port.Open();
-
-                    Port.ReadTimeout = 200;
-                    Flush();
-
-                    byte[] txCommand = new byte[] { 0x45, 0x52, 0x00, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x01, 0x00, 0x02, 0x00 };
-
-                    Port.Write(txCommand, 0, txCommand.Length);
-                    Thread.Sleep(100);
-
-                    try
-                    {
-                        byte[] rxBuffer = new byte[10];
-
-                        PortRead(rxBuffer, 1000);
-
-                        string resp = Encoding.ASCII.GetString(rxBuffer);
-
-                        if (resp == "[g3gg0.de]")
-                        {
-                            success = true;
-                        }
-                        else
-                        {
-                            message = "Invalid magic received";
-                        }
-                    }
-                    catch (TimeoutException ex)
-                    {
-                        message = "No custom response";
-                    }
-                }
-                catch (Exception ex)
-                {
-                    message = "Exception: " + ex.Message;
-                }
+                Camera = new EPC901Camera();
+                success = Camera.Open(cmbPorts.Text);
 
                 if (success)
                 {
@@ -423,8 +386,8 @@ namespace SpectrumPlotter
                 else
                 {
                     MessageBox.Show(message, "Failed to open serial port");
-                    Port.Close();
-                    Port = null;
+                    Camera.Close();
+                    Camera = null;
                 }
             }
             else
@@ -432,14 +395,8 @@ namespace SpectrumPlotter
                 MainThread.Abort();
                 MainThread = null;
 
-                try
-                {
-                    Port.Close();
-                }
-                catch (Exception ex)
-                {
-                }
-                Port = null;
+                Camera.Close();
+                Camera = null;
 
                 btnConnect.Text = "Connect";
                 cmbPorts.Enabled = true;
@@ -768,73 +725,32 @@ namespace SpectrumPlotter
             base.OnClosing(e);
         }
 
-        private int PortRead(byte[] buffer, int timeout)
-        {
-            DateTime start = DateTime.Now;
-            DateTime end = start.AddMilliseconds(timeout);
-
-            while (timeout == -1 || (DateTime.Now < end))
-            {
-                if(Port.BytesToRead >= buffer.Length)
-                {
-                    break;
-                }
-            }
-
-            int avail = Math.Min(Port.BytesToRead, buffer.Length);
-            if (avail != Port.BytesToRead)
-            {
-                Console.WriteLine();
-            }
-
-            int read = Port.Read(buffer, 0, avail);
-            if (read != avail)
-            {
-                throw new Exception("Failed to read data from serial port");
-            }
-
-            return read;
-        }
-
-        private void MainFunc()
+         private void MainFunc()
         {
             byte[] txCommand = new byte[] { 0x45, 0x52, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02, 0x00 };
             byte[] serialReadBuf = new byte[3694 * 2];
+            UInt16[] pixels = null;
 
             while (true)
             {
-                /* send config */
-                InsertUint32(txCommand, 2, (uint)Config.TriggerDelay);
-                txCommand[6] = (byte)(Config.Trigger ? 0 : 2);
-                txCommand[10] = 2;
-                Port.Write(txCommand, 0, txCommand.Length);
-
-                CaptureStart = DateTime.Now;
-                CaptureEnd = CaptureStart.AddMilliseconds(Config.IcgPeriod / 2000);
-
-                /* send request */
-                InsertUint32(txCommand, 2, Config.ShPeriod);
-                InsertUint32(txCommand, 6, Config.IcgPeriod);
-                txCommand[10] = 0;
-                txCommand[11] = 0;
-                Port.Write(txCommand, 0, txCommand.Length);
-
-                Console.WriteLine(DateTime.Now + " SH: " + Config.ShPeriod + ", ICG: " + Config.IcgPeriod);
-
-                PortRead(serialReadBuf, -1);
-
-                if(PayloadBuffer.Length != serialReadBuf.Length/2)
+                /* set exposure */
+                Camera.SetExposure(Config.Exposure);
+                Camera.Capture();
+                pixels = Camera.GetPixels();
+                if (pixels != null)
                 {
-                    Array.Resize(ref PayloadBuffer, serialReadBuf.Length / 2);
+                    // necessary to copy?
+                    if (PayloadBuffer.Length != pixels.Length)
+                    {
+                        Array.Resize(ref PayloadBuffer, pixels.Length);
+                    }
+                    for (int i = 0; i < pixels.Length; i++)
+                    {
+                        PayloadBuffer[i] = pixels[i];
+                    }
+                    PayloadUsed = pixels.Length;
+                    SensorDataReceived = true;
                 }
-
-                for (int pos = 0; pos < serialReadBuf.Length / 2; pos++)
-                {
-                    PayloadBuffer[pos] = (ushort)((serialReadBuf[pos * 2 + 1] << 8) | serialReadBuf[pos * 2 + 0]);
-                    //PayloadBuffer[pos] = (ushort)(0xFFFF * pos / 3694);
-                }
-                PayloadUsed = serialReadBuf.Length / 2;
-                SensorDataReceived = true;
             }
         }
 
@@ -843,26 +759,7 @@ namespace SpectrumPlotter
             Array.Copy(BitConverter.GetBytes(value).Reverse().ToArray(), 0, buffer, offset, 4);
         }
 
-        private void Flush()
-        {
-            byte[] buffer = new byte[8192];
-
-            int timeout = 200;
-            DateTime start = DateTime.Now;
-            DateTime end = start.AddMilliseconds(timeout);
-            int readPos = 0;
-
-            while (DateTime.Now < end)
-            {
-                if (Port.BytesToRead > 0)
-                {
-                    Port.Read(buffer, readPos, buffer.Length);
-                    end = DateTime.Now.AddMilliseconds(timeout);
-                }
-            }
-        }
-
-        private void chkTrigger_CheckedChanged(object sender, EventArgs e)
+         private void chkTrigger_CheckedChanged(object sender, EventArgs e)
         {
             if (chkTrigger.Checked != Config.Trigger)
             {
@@ -871,13 +768,13 @@ namespace SpectrumPlotter
             }
         }
 
-        private void txtShPeriod_TextChanged(object sender, EventArgs e)
+        private void txtExposure_TextChanged(object sender, EventArgs e)
         {
-            bool success = long.TryParse(txtShPeriod.Text, out long value);
+            bool success = long.TryParse(txtExposure.Text, out long value);
 
             if (!success)
             {
-                txtShPeriod.BackColor = Color.Red;
+                txtExposure.BackColor = Color.Red;
                 return;
             }
         }
@@ -893,41 +790,32 @@ namespace SpectrumPlotter
             }
         }
 
-        private void txtShPeriod_KeyDown(object sender, KeyEventArgs e)
+        private void txtExposure_KeyDown(object sender, KeyEventArgs e)
         {
             if (e.KeyCode != Keys.Enter)
             {
                 return;
             }
-            bool success = long.TryParse(txtShPeriod.Text, out long displayValue);
+            bool success = long.TryParse(txtExposure.Text, out long displayValue);
 
             if (!success)
             {
-                txtShPeriod.BackColor = Color.Red;
+                txtExposure.BackColor = Color.Red;
                 return;
             }
 
             displayValue = Math.Min(displayValue, uint.MaxValue / 2);
             displayValue = Math.Max(displayValue, 10);
 
-            long rawValue = displayValue * 2;
-
-
-            txtShPeriod.BackColor = Color.White;
-            if (Config.ShPeriod != (uint)rawValue)
+            txtExposure.BackColor = Color.White;
+            if (Config.Exposure != displayValue)
             {
-                Config.ShPeriod = (uint)rawValue;
+                Config.Exposure = (uint)displayValue;
                 Config.Changed = true;
             }
-            if (txtShPeriod.Text != displayValue.ToString())
+            if (txtExposure.Text != displayValue.ToString())
             {
-                txtShPeriod.Text = displayValue.ToString();
-            }
-
-            if(Config.ShPeriod > Config.IcgPeriod)
-            {
-                Config.IcgPeriod = Config.ShPeriod;
-                txtIcgPeriod.Text = Config.IcgPeriod.ToString();
+                txtExposure.Text = displayValue.ToString();
             }
         }
 
@@ -1541,6 +1429,11 @@ namespace SpectrumPlotter
         {
             var design = Matrix<double>.Build.Dense(x.Length, order + 1, (i, j) => Math.Pow(x[i], j));
             return MultipleRegression.QR(design, Vector<double>.Build.Dense(y)).ToArray();
+        }
+
+        private void label1_Click(object sender, EventArgs e)
+        {
+
         }
     }
 }

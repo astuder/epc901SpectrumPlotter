@@ -70,6 +70,7 @@ namespace SpectrumPlotter
         public bool TriggerAutoMatch = false;
         public bool TriggerAutoCapture = false;
         public bool TriggerAutoNormalize = false;
+        public uint Exposure = 1000;
         public uint ShPeriod = 10;
         public uint IcgPeriod = 7400;
         public int TriggerDelay = 0;
@@ -118,6 +119,7 @@ namespace SpectrumPlotter
                         TriggerAutoMatch = newCfg.TriggerAutoMatch;
                         TriggerAutoCapture = newCfg.TriggerAutoCapture;
                         TriggerAutoNormalize = newCfg.TriggerAutoNormalize;
+                        Exposure = newCfg.Exposure;
                         ShPeriod = newCfg.ShPeriod;
                         IcgPeriod = newCfg.IcgPeriod;
                         TriggerDelay = newCfg.TriggerDelay;
