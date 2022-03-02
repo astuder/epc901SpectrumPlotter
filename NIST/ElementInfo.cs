@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpectrumPlotter.LIBS
+namespace SpectrumPlotter.NIST
 {
     public class ElementInfo
     {
@@ -55,12 +55,12 @@ namespace SpectrumPlotter.LIBS
             Elements[Elements.Length - 1] = new SpectrumValues(name);
         }
 
-        public void Save()
+        public void Save(string prefix)
         {
             try
             {
                 string jsonString = JsonConvert.SerializeObject(this, Formatting.Indented);
-                File.WriteAllText("LIBS-" + Name + ".json", jsonString);
+                File.WriteAllText(prefix + "-" + Name + ".json", jsonString);
             }
             catch (Exception ex)
             {

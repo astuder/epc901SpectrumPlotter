@@ -3,7 +3,7 @@ using MathNet.Numerics.LinearRegression;
 using Newtonsoft.Json;
 using ScottPlot;
 using ScottPlot.Plottable;
-using SpectrumPlotter.LIBS;
+using SpectrumPlotter.NIST;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -51,7 +51,7 @@ namespace SpectrumPlotter
         private ArrowCoordinated MaxArrow = null;
 
         private ConfigFile Config = new ConfigFile();
-        private ElementDatabase Elements = new ElementDatabase();
+        private ElementDatabase ElementsLIBS = new ElementDatabase("LIBS");
         private Dictionary<string, ListViewItem> ElementListMap = new Dictionary<string, ListViewItem>();
         private Dictionary<SignalPlotXY, ListViewItem> CaptureListMap = new Dictionary<SignalPlotXY, ListViewItem>();
         private Dictionary<SignalPlotXY, SpectrumWindow> CapturedPlots = new Dictionary<SignalPlotXY, SpectrumWindow>();
@@ -277,7 +277,7 @@ namespace SpectrumPlotter
 
             if (cmbDatabase.Text == "LIBS")
             {
-                foreach (var elemInfo in Elements.ElementInfos)
+                foreach (var elemInfo in ElementsLIBS.ElementInfos)
                 {
                     foreach (var elem in elemInfo.Elements)
                     {
@@ -889,7 +889,7 @@ namespace SpectrumPlotter
                         }));
                     }
 
-                    foreach (ElementInfo info in Elements.ElementInfos)
+                    foreach (ElementInfo info in ElementsLIBS.ElementInfos)
                     {
                         foreach (var elem in info.Elements)
                         {
@@ -987,7 +987,7 @@ namespace SpectrumPlotter
                     return;
                 }
 
-                ElementInfo info = Elements.Get(elem.Text);
+                ElementInfo info = ElementsLIBS.Get(elem.Text);
                 if (info == null)
                 {
                     return;
@@ -1040,7 +1040,7 @@ namespace SpectrumPlotter
             string elementName = LastCheckedElement.Text;
 
 
-            ElementInfo info = Elements.Get(elementName);
+            ElementInfo info = ElementsLIBS.Get(elementName);
             if (info == null)
             {
                 PlotUpdateAsync = true;
@@ -1112,12 +1112,13 @@ namespace SpectrumPlotter
             string[] elements = new[] { "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar", "K", "Ca", "Sc", "Ti", "V", "Cr", "Mn", "Fe", "Co", "Ni", "Cu", "Zn", "Ga", "Ge", "As", "Se", "Br", "Kr", "Rb", "Sr", "Y", "Zr", "Nb", "Mo", "Tc", "Ru", "Rh", "Pd", "Ag", "Cd", "In", "Sn", "Sb", "Te", "I", "Xe", "Cs", "Ba", "La", "Ce", "Pr", "Nd", "Pm", "Sm", "Eu", "Gd", "Tb", "Dy", "Ho", "Er", "Tm", "Yb", "Lu", "Hf", "Ta", "W", "Re", "Os", "Ir", "Pt", "Au", "Hg", "Tl", "Pb", "Bi", "Po", "At", "Rn", "Fr", "Ra", "Ac", "Th", "Pa", "U", "Np", "Pu", "Am", "Cm", "Bk", "Cf", "Es", "Fm", "Md", "No", "Lr", "Rf", "Db", "Sg", "Bh", "Hs", "Mt", "Ds", "Rg", "Cn", "Nh", "Fl", "Mc", "Lv", "Ts", "Og" };
 
             int fetched = 0;
+            string database = cmbDatabase.Text;
 
-            Fetcher.MinWavelength = Config.LibsMinWavelength;
-            Fetcher.MaxWavelength = Config.LibsMaxWavelength;
-            Fetcher.MaxCharge = Config.LibsMaxCharge;
-            Fetcher.Resolution = Config.LibsResolution;
-            Fetcher.Temperature = Config.LibsTemperature;
+            FetcherLIBS.MinWavelength = Config.LibsMinWavelength;
+            FetcherLIBS.MaxWavelength = Config.LibsMaxWavelength;
+            FetcherLIBS.MaxCharge = Config.LibsMaxCharge;
+            FetcherLIBS.Resolution = Config.LibsResolution;
+            FetcherLIBS.Temperature = Config.LibsTemperature;
 
             Thread fetcher = new Thread(() =>
             {
@@ -1125,16 +1126,30 @@ namespace SpectrumPlotter
                 {
                     foreach (string element in elements)
                     {
-                        if (Fetcher.RequestElement(element))
+                        switch (database)
                         {
-                            fetched++;
+                            case "LIBS":
+                                if (FetcherLIBS.RequestElement(element))
+                                {
+                                    fetched++;
+                                }
+                                break;
+                            case "Lines":
+                                // TBD
+                                break;
+                            default:
+                                break;
+
                         }
                         BeginInvoke(new Action(() => btnFetch.Text = "Fetch: " + fetched + "/" + elements.Length));
                     }
                     BeginInvoke(new Action(() =>
                     {
                         btnFetch.Text = "Fetched " + fetched + "/" + elements.Length;
-                        Elements = new ElementDatabase();
+                        if (database != "")
+                        {
+                            ElementsLIBS = new ElementDatabase(database);
+                        }
                         UpdateElements();
                     }));
                 }

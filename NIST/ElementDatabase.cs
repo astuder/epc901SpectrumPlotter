@@ -5,17 +5,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpectrumPlotter.LIBS
+namespace SpectrumPlotter.NIST
 {
     public class ElementDatabase
     {
         public List<ElementInfo> ElementInfos = new List<ElementInfo>();
 
-        public ElementDatabase()
+        public ElementDatabase(string prefix)
         {
             var di = new DirectoryInfo(Environment.CurrentDirectory);
 
-            foreach(var file in di.GetFiles("LIBS-*.json"))
+            foreach(var file in di.GetFiles(prefix + "-*.json"))
             {
                 var info = ElementInfo.Load(file.FullName);
 

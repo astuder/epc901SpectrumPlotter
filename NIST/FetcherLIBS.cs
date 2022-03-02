@@ -10,9 +10,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace SpectrumPlotter.LIBS
+namespace SpectrumPlotter.NIST
 {
-    public class Fetcher
+    public class FetcherLIBS
     {
         public static int MinWavelength = 300;
         public static int MaxWavelength = 900;
@@ -102,7 +102,7 @@ namespace SpectrumPlotter.LIBS
                     spectra.Elements[pos].Intensities = elementIntensities[pos].ToArray();
                 }
 
-                spectra.Save();
+                spectra.Save("LIBS");
 
                 return true;
             }

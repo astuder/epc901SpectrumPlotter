@@ -6,7 +6,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace SpectrumPlotter.LIBS
+namespace SpectrumPlotter.NIST
 {
     public class SpectrumWindow
     {

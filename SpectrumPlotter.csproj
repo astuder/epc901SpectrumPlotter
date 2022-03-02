@@ -83,10 +83,10 @@
   <ItemGroup>
     <Compile Include="EPC901Camera.cs" />
     <Compile Include="ConfigFile.cs" />
-    <Compile Include="LIBS\ElementDatabase.cs" />
-    <Compile Include="LIBS\ElementInfo.cs" />
-    <Compile Include="LIBS\Fetcher.cs" />
-    <Compile Include="LIBS\SpectrumWindow.cs" />
+    <Compile Include="NIST\ElementDatabase.cs" />
+    <Compile Include="NIST\ElementInfo.cs" />
+    <Compile Include="NIST\FetcherLIBS.cs" />
+    <Compile Include="NIST\SpectrumWindow.cs" />
     <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="MainScreen.cs">
       <SubType>Form</SubType>
