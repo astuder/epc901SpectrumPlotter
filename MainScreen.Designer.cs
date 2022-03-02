@@ -61,6 +61,7 @@ namespace SpectrumPlotter
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.splitContainer5 = new System.Windows.Forms.SplitContainer();
+            this.cmbDatabase = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -244,12 +245,12 @@ namespace SpectrumPlotter
             // 
             // btnFetch
             // 
-            this.btnFetch.AllowDrop = true;
-            this.btnFetch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnFetch.Location = new System.Drawing.Point(131, 3);
+            this.btnFetch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFetch.Enabled = false;
+            this.btnFetch.Location = new System.Drawing.Point(157, 4);
             this.btnFetch.Margin = new System.Windows.Forms.Padding(4);
             this.btnFetch.Name = "btnFetch";
-            this.btnFetch.Size = new System.Drawing.Size(161, 28);
+            this.btnFetch.Size = new System.Drawing.Size(135, 28);
             this.btnFetch.TabIndex = 1;
             this.btnFetch.Text = "Fetch NIST";
             this.btnFetch.UseVisualStyleBackColor = true;
@@ -282,16 +283,18 @@ namespace SpectrumPlotter
             // 
             // lstElementLib
             // 
+            this.lstElementLib.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
             this.lstElementLib.CheckBoxes = true;
             this.lstElementLib.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.colHdrSymbol,
             this.colHdrMatch});
-            this.lstElementLib.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstElementLib.HideSelection = false;
             this.lstElementLib.Location = new System.Drawing.Point(0, 0);
             this.lstElementLib.Margin = new System.Windows.Forms.Padding(4);
             this.lstElementLib.Name = "lstElementLib";
-            this.lstElementLib.Size = new System.Drawing.Size(292, 567);
+            this.lstElementLib.Size = new System.Drawing.Size(292, 564);
             this.lstElementLib.TabIndex = 0;
             this.lstElementLib.UseCompatibleStateImageBehavior = false;
             this.lstElementLib.View = System.Windows.Forms.View.Details;
@@ -317,7 +320,7 @@ namespace SpectrumPlotter
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(300, 563);
+            this.tabPage2.Size = new System.Drawing.Size(300, 615);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Captures";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -334,7 +337,7 @@ namespace SpectrumPlotter
             this.lstCaptures.Location = new System.Drawing.Point(4, 4);
             this.lstCaptures.Margin = new System.Windows.Forms.Padding(4);
             this.lstCaptures.Name = "lstCaptures";
-            this.lstCaptures.Size = new System.Drawing.Size(292, 555);
+            this.lstCaptures.Size = new System.Drawing.Size(292, 607);
             this.lstCaptures.TabIndex = 1;
             this.lstCaptures.UseCompatibleStateImageBehavior = false;
             this.lstCaptures.View = System.Windows.Forms.View.Details;
@@ -445,14 +448,26 @@ namespace SpectrumPlotter
             // 
             // splitContainer5.Panel1
             // 
-            this.splitContainer5.Panel1.Controls.Add(this.lstElementLib);
+            this.splitContainer5.Panel1.Controls.Add(this.cmbDatabase);
+            this.splitContainer5.Panel1.Controls.Add(this.btnFetch);
             // 
             // splitContainer5.Panel2
             // 
-            this.splitContainer5.Panel2.Controls.Add(this.btnFetch);
+            this.splitContainer5.Panel2.Controls.Add(this.lstElementLib);
             this.splitContainer5.Size = new System.Drawing.Size(292, 607);
-            this.splitContainer5.SplitterDistance = 567;
+            this.splitContainer5.SplitterDistance = 39;
             this.splitContainer5.TabIndex = 1;
+            // 
+            // cmbDatabase
+            // 
+            this.cmbDatabase.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbDatabase.FormattingEnabled = true;
+            this.cmbDatabase.Location = new System.Drawing.Point(3, 7);
+            this.cmbDatabase.Name = "cmbDatabase";
+            this.cmbDatabase.Size = new System.Drawing.Size(147, 24);
+            this.cmbDatabase.TabIndex = 2;
+            this.cmbDatabase.DropDown += new System.EventHandler(this.cmbDatabase_DropDown);
+            this.cmbDatabase.TextChanged += new System.EventHandler(this.cmbDatabase_Changed);
             // 
             // MainScreen
             // 
@@ -524,6 +539,7 @@ namespace SpectrumPlotter
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ComboBox cmbPorts;
         private System.Windows.Forms.SplitContainer splitContainer5;
+        private System.Windows.Forms.ComboBox cmbDatabase;
     }
 }
 

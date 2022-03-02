@@ -275,13 +275,16 @@ namespace SpectrumPlotter
             lstElementLib.Items.Clear();
             ElementListMap.Clear();
 
-            foreach (var elemInfo in Elements.ElementInfos)
+            if (cmbDatabase.Text == "LIBS")
             {
-                foreach (var elem in elemInfo.Elements)
+                foreach (var elemInfo in Elements.ElementInfos)
                 {
-                    ListViewItem item = new ListViewItem(new string[] { elem.Name, "" });
-                    lstElementLib.Items.Add(item);
-                    ElementListMap.Add(elem.Name, item);
+                    foreach (var elem in elemInfo.Elements)
+                    {
+                        ListViewItem item = new ListViewItem(new string[] { elem.Name, "" });
+                        lstElementLib.Items.Add(item);
+                        ElementListMap.Add(elem.Name, item);
+                    }
                 }
             }
         }
@@ -1332,6 +1335,28 @@ namespace SpectrumPlotter
         private void label1_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void cmbDatabase_DropDown(object sender, EventArgs e)
+        {
+            // TODO: dynamically populate with available NIST database classes?
+            string[] dbs = { "Lines", "LIBS" };
+
+            cmbDatabase.Items.Clear();
+            cmbDatabase.Items.AddRange(dbs);
+        }
+
+        private void cmbDatabase_Changed(object sender, EventArgs e)
+        {
+            if (cmbDatabase.Text == "")
+            {
+                btnFetch.Enabled = false;
+            }
+            else
+            {
+                btnFetch.Enabled = true;
+                UpdateElements();
+            }
         }
     }
 }
