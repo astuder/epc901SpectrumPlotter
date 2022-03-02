@@ -38,16 +38,10 @@ namespace SpectrumPlotter
             this.progressBar = new System.Windows.Forms.ProgressBar();
             this.label4 = new System.Windows.Forms.Label();
             this.btnCapture = new System.Windows.Forms.Button();
-            this.txtTriggerDelay = new System.Windows.Forms.TextBox();
-            this.chkTrigger = new System.Windows.Forms.CheckBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
-            this.txtIcgPeriod = new System.Windows.Forms.TextBox();
             this.txtExposure = new System.Windows.Forms.TextBox();
             this.formsPlot1 = new ScottPlot.FormsPlot();
             this.splitContainer2 = new System.Windows.Forms.SplitContainer();
-            this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.btnFetch = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tabPage1 = new System.Windows.Forms.TabPage();
@@ -66,6 +60,7 @@ namespace SpectrumPlotter
             this.lstPolyfit = new System.Windows.Forms.ListView();
             this.columnHeader2 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
             this.columnHeader3 = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
+            this.splitContainer5 = new System.Windows.Forms.SplitContainer();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -74,10 +69,6 @@ namespace SpectrumPlotter
             this.splitContainer2.Panel1.SuspendLayout();
             this.splitContainer2.Panel2.SuspendLayout();
             this.splitContainer2.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).BeginInit();
-            this.splitContainer3.Panel1.SuspendLayout();
-            this.splitContainer3.Panel2.SuspendLayout();
-            this.splitContainer3.SuspendLayout();
             this.tabControl1.SuspendLayout();
             this.tabPage1.SuspendLayout();
             this.tabPage2.SuspendLayout();
@@ -86,6 +77,10 @@ namespace SpectrumPlotter
             this.splitContainer4.Panel1.SuspendLayout();
             this.splitContainer4.Panel2.SuspendLayout();
             this.splitContainer4.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).BeginInit();
+            this.splitContainer5.Panel1.SuspendLayout();
+            this.splitContainer5.Panel2.SuspendLayout();
+            this.splitContainer5.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnConnect
@@ -116,12 +111,7 @@ namespace SpectrumPlotter
             this.splitContainer1.Panel1.Controls.Add(this.progressBar);
             this.splitContainer1.Panel1.Controls.Add(this.label4);
             this.splitContainer1.Panel1.Controls.Add(this.btnCapture);
-            this.splitContainer1.Panel1.Controls.Add(this.txtTriggerDelay);
-            this.splitContainer1.Panel1.Controls.Add(this.chkTrigger);
-            this.splitContainer1.Panel1.Controls.Add(this.label3);
-            this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
-            this.splitContainer1.Panel1.Controls.Add(this.txtIcgPeriod);
             this.splitContainer1.Panel1.Controls.Add(this.txtExposure);
             this.splitContainer1.Panel1.Controls.Add(this.btnConnect);
             // 
@@ -194,51 +184,6 @@ namespace SpectrumPlotter
             this.btnCapture.UseVisualStyleBackColor = true;
             this.btnCapture.Click += new System.EventHandler(this.BtnCapture_Click);
             // 
-            // txtTriggerDelay
-            // 
-            this.txtTriggerDelay.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtTriggerDelay.Location = new System.Drawing.Point(939, 12);
-            this.txtTriggerDelay.Margin = new System.Windows.Forms.Padding(4);
-            this.txtTriggerDelay.Name = "txtTriggerDelay";
-            this.txtTriggerDelay.Size = new System.Drawing.Size(96, 23);
-            this.txtTriggerDelay.TabIndex = 6;
-            this.txtTriggerDelay.Text = "0";
-            this.txtTriggerDelay.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtTriggerDelay.TextChanged += new System.EventHandler(this.txtTriggerDelay_TextChanged);
-            this.txtTriggerDelay.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtTriggerDelay_KeyDown);
-            // 
-            // chkTrigger
-            // 
-            this.chkTrigger.AutoSize = true;
-            this.chkTrigger.Location = new System.Drawing.Point(768, 15);
-            this.chkTrigger.Margin = new System.Windows.Forms.Padding(4);
-            this.chkTrigger.Name = "chkTrigger";
-            this.chkTrigger.Size = new System.Drawing.Size(73, 20);
-            this.chkTrigger.TabIndex = 5;
-            this.chkTrigger.Text = "Trigger";
-            this.chkTrigger.UseVisualStyleBackColor = true;
-            this.chkTrigger.CheckedChanged += new System.EventHandler(this.chkTrigger_CheckedChanged);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(844, 16);
-            this.label3.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(68, 16);
-            this.label3.TabIndex = 4;
-            this.label3.Text = "Delay [µs]";
-            // 
-            // label2
-            // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(489, 17);
-            this.label2.Margin = new System.Windows.Forms.Padding(4, 0, 4, 0);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(96, 16);
-            this.label2.TabIndex = 4;
-            this.label2.Text = "ICG period [µs]";
-            // 
             // label1
             // 
             this.label1.AutoSize = true;
@@ -249,19 +194,6 @@ namespace SpectrumPlotter
             this.label1.TabIndex = 4;
             this.label1.Text = "Exposure [µs]";
             this.label1.Click += new System.EventHandler(this.label1_Click);
-            // 
-            // txtIcgPeriod
-            // 
-            this.txtIcgPeriod.Font = new System.Drawing.Font("Courier New", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.txtIcgPeriod.Location = new System.Drawing.Point(593, 12);
-            this.txtIcgPeriod.Margin = new System.Windows.Forms.Padding(4);
-            this.txtIcgPeriod.Name = "txtIcgPeriod";
-            this.txtIcgPeriod.Size = new System.Drawing.Size(105, 23);
-            this.txtIcgPeriod.TabIndex = 3;
-            this.txtIcgPeriod.Text = "740";
-            this.txtIcgPeriod.TextAlign = System.Windows.Forms.HorizontalAlignment.Right;
-            this.txtIcgPeriod.TextChanged += new System.EventHandler(this.txtIcgPeriod_TextChanged);
-            this.txtIcgPeriod.KeyDown += new System.Windows.Forms.KeyEventHandler(this.txtIcgPeriod_KeyDown);
             // 
             // txtExposure
             // 
@@ -304,36 +236,15 @@ namespace SpectrumPlotter
             // 
             // splitContainer2.Panel2
             // 
-            this.splitContainer2.Panel2.Controls.Add(this.splitContainer3);
+            this.splitContainer2.Panel2.Controls.Add(this.tabControl1);
             this.splitContainer2.Size = new System.Drawing.Size(1709, 644);
             this.splitContainer2.SplitterDistance = 1390;
             this.splitContainer2.SplitterWidth = 11;
             this.splitContainer2.TabIndex = 1;
             // 
-            // splitContainer3
-            // 
-            this.splitContainer3.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.splitContainer3.FixedPanel = System.Windows.Forms.FixedPanel.Panel1;
-            this.splitContainer3.Location = new System.Drawing.Point(0, 0);
-            this.splitContainer3.Margin = new System.Windows.Forms.Padding(4);
-            this.splitContainer3.Name = "splitContainer3";
-            this.splitContainer3.Orientation = System.Windows.Forms.Orientation.Horizontal;
-            // 
-            // splitContainer3.Panel1
-            // 
-            this.splitContainer3.Panel1.Controls.Add(this.btnFetch);
-            // 
-            // splitContainer3.Panel2
-            // 
-            this.splitContainer3.Panel2.Controls.Add(this.tabControl1);
-            this.splitContainer3.Size = new System.Drawing.Size(308, 644);
-            this.splitContainer3.SplitterDistance = 34;
-            this.splitContainer3.SplitterWidth = 5;
-            this.splitContainer3.TabIndex = 2;
-            // 
             // btnFetch
             // 
-            this.btnFetch.Location = new System.Drawing.Point(4, 7);
+            this.btnFetch.Location = new System.Drawing.Point(127, 8);
             this.btnFetch.Margin = new System.Windows.Forms.Padding(4);
             this.btnFetch.Name = "btnFetch";
             this.btnFetch.Size = new System.Drawing.Size(161, 28);
@@ -352,17 +263,17 @@ namespace SpectrumPlotter
             this.tabControl1.Margin = new System.Windows.Forms.Padding(4);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(308, 605);
+            this.tabControl1.Size = new System.Drawing.Size(308, 644);
             this.tabControl1.TabIndex = 1;
             // 
             // tabPage1
             // 
-            this.tabPage1.Controls.Add(this.lstElementLib);
+            this.tabPage1.Controls.Add(this.splitContainer5);
             this.tabPage1.Location = new System.Drawing.Point(4, 25);
             this.tabPage1.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage1.Name = "tabPage1";
             this.tabPage1.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage1.Size = new System.Drawing.Size(300, 576);
+            this.tabPage1.Size = new System.Drawing.Size(300, 615);
             this.tabPage1.TabIndex = 0;
             this.tabPage1.Text = "NIST Database";
             this.tabPage1.UseVisualStyleBackColor = true;
@@ -375,10 +286,10 @@ namespace SpectrumPlotter
             this.colHdrMatch});
             this.lstElementLib.Dock = System.Windows.Forms.DockStyle.Fill;
             this.lstElementLib.HideSelection = false;
-            this.lstElementLib.Location = new System.Drawing.Point(4, 4);
+            this.lstElementLib.Location = new System.Drawing.Point(0, 0);
             this.lstElementLib.Margin = new System.Windows.Forms.Padding(4);
             this.lstElementLib.Name = "lstElementLib";
-            this.lstElementLib.Size = new System.Drawing.Size(292, 568);
+            this.lstElementLib.Size = new System.Drawing.Size(292, 567);
             this.lstElementLib.TabIndex = 0;
             this.lstElementLib.UseCompatibleStateImageBehavior = false;
             this.lstElementLib.View = System.Windows.Forms.View.Details;
@@ -404,7 +315,7 @@ namespace SpectrumPlotter
             this.tabPage2.Margin = new System.Windows.Forms.Padding(4);
             this.tabPage2.Name = "tabPage2";
             this.tabPage2.Padding = new System.Windows.Forms.Padding(4);
-            this.tabPage2.Size = new System.Drawing.Size(300, 576);
+            this.tabPage2.Size = new System.Drawing.Size(300, 563);
             this.tabPage2.TabIndex = 1;
             this.tabPage2.Text = "Captures";
             this.tabPage2.UseVisualStyleBackColor = true;
@@ -421,7 +332,7 @@ namespace SpectrumPlotter
             this.lstCaptures.Location = new System.Drawing.Point(4, 4);
             this.lstCaptures.Margin = new System.Windows.Forms.Padding(4);
             this.lstCaptures.Name = "lstCaptures";
-            this.lstCaptures.Size = new System.Drawing.Size(292, 568);
+            this.lstCaptures.Size = new System.Drawing.Size(292, 555);
             this.lstCaptures.TabIndex = 1;
             this.lstCaptures.UseCompatibleStateImageBehavior = false;
             this.lstCaptures.View = System.Windows.Forms.View.Details;
@@ -523,6 +434,24 @@ namespace SpectrumPlotter
             this.columnHeader3.Text = "λ";
             this.columnHeader3.Width = 74;
             // 
+            // splitContainer5
+            // 
+            this.splitContainer5.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainer5.Location = new System.Drawing.Point(4, 4);
+            this.splitContainer5.Name = "splitContainer5";
+            this.splitContainer5.Orientation = System.Windows.Forms.Orientation.Horizontal;
+            // 
+            // splitContainer5.Panel1
+            // 
+            this.splitContainer5.Panel1.Controls.Add(this.lstElementLib);
+            // 
+            // splitContainer5.Panel2
+            // 
+            this.splitContainer5.Panel2.Controls.Add(this.btnFetch);
+            this.splitContainer5.Size = new System.Drawing.Size(292, 607);
+            this.splitContainer5.SplitterDistance = 567;
+            this.splitContainer5.TabIndex = 1;
+            // 
             // MainScreen
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
@@ -543,10 +472,6 @@ namespace SpectrumPlotter
             this.splitContainer2.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer2)).EndInit();
             this.splitContainer2.ResumeLayout(false);
-            this.splitContainer3.Panel1.ResumeLayout(false);
-            this.splitContainer3.Panel2.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.splitContainer3)).EndInit();
-            this.splitContainer3.ResumeLayout(false);
             this.tabControl1.ResumeLayout(false);
             this.tabPage1.ResumeLayout(false);
             this.tabPage2.ResumeLayout(false);
@@ -555,6 +480,10 @@ namespace SpectrumPlotter
             this.splitContainer4.Panel2.ResumeLayout(false);
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer4)).EndInit();
             this.splitContainer4.ResumeLayout(false);
+            this.splitContainer5.Panel1.ResumeLayout(false);
+            this.splitContainer5.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainer5)).EndInit();
+            this.splitContainer5.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -565,20 +494,14 @@ namespace SpectrumPlotter
         private System.Windows.Forms.Button btnConnect;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private ScottPlot.FormsPlot formsPlot1;
-        private System.Windows.Forms.CheckBox chkTrigger;
-        private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox txtIcgPeriod;
         private System.Windows.Forms.TextBox txtExposure;
-        private System.Windows.Forms.TextBox txtTriggerDelay;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button btnCapture;
         private System.Windows.Forms.SplitContainer splitContainer2;
         private System.Windows.Forms.Button btnFetch;
         private System.Windows.Forms.ListView lstElementLib;
         private System.Windows.Forms.ColumnHeader colHdrMatch;
         private System.Windows.Forms.ColumnHeader colHdrSymbol;
-        private System.Windows.Forms.SplitContainer splitContainer3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.ProgressBar progressBar;
@@ -598,6 +521,7 @@ namespace SpectrumPlotter
         private System.Windows.Forms.ColumnHeader columnHeader2;
         private System.Windows.Forms.ColumnHeader columnHeader3;
         private System.Windows.Forms.ComboBox cmbPorts;
+        private System.Windows.Forms.SplitContainer splitContainer5;
     }
 }
 

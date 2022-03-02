@@ -114,9 +114,6 @@ namespace SpectrumPlotter
             PolyfitCalc();
             cmbPorts.Text = Config.SerialPort;
             txtExposure.Text = (Config.Exposure).ToString();
-            txtIcgPeriod.Text = (Config.IcgPeriod * 2).ToString();
-            chkTrigger.Checked = Config.Trigger;
-            txtTriggerDelay.Text = Config.TriggerDelay.ToString();
 
             PlotSelectedElement.Color = GetColor(Config.LibsColor, Color.Red);
             PlotPolygon.Color = GetColor(Config.MeasurementColor, Color.SkyBlue);
@@ -727,8 +724,6 @@ namespace SpectrumPlotter
 
          private void MainFunc()
         {
-            byte[] txCommand = new byte[] { 0x45, 0x52, 0x00, 0x00, 0x01, 0x00, 0x02, 0x00, 0x01, 0x00, 0x02, 0x00 };
-            byte[] serialReadBuf = new byte[3694 * 2];
             UInt16[] pixels = null;
 
             while (true)
@@ -754,20 +749,6 @@ namespace SpectrumPlotter
             }
         }
 
-        private void InsertUint32(byte[] buffer, int offset, uint value)
-        {
-            Array.Copy(BitConverter.GetBytes(value).Reverse().ToArray(), 0, buffer, offset, 4);
-        }
-
-         private void chkTrigger_CheckedChanged(object sender, EventArgs e)
-        {
-            if (chkTrigger.Checked != Config.Trigger)
-            {
-                Config.Trigger = chkTrigger.Checked;
-                Config.Changed = true;
-            }
-        }
-
         private void txtExposure_TextChanged(object sender, EventArgs e)
         {
             bool success = long.TryParse(txtExposure.Text, out long value);
@@ -775,17 +756,6 @@ namespace SpectrumPlotter
             if (!success)
             {
                 txtExposure.BackColor = Color.Red;
-                return;
-            }
-        }
-
-        private void txtIcgPeriod_TextChanged(object sender, EventArgs e)
-        {
-            bool success = long.TryParse(txtIcgPeriod.Text, out long value);
-
-            if (!success)
-            {
-                txtIcgPeriod.BackColor = Color.Red;
                 return;
             }
         }
@@ -817,78 +787,6 @@ namespace SpectrumPlotter
             {
                 txtExposure.Text = displayValue.ToString();
             }
-        }
-
-        private void txtIcgPeriod_KeyDown(object sender, KeyEventArgs e)
-        {
-            if(e.KeyCode != Keys.Enter)
-            {
-                return;
-            }
-            bool success = long.TryParse(txtIcgPeriod.Text, out long displayValue);
-
-            if (!success)
-            {
-                txtIcgPeriod.BackColor = Color.Red;
-                return;
-            }
-
-            displayValue = Math.Min(displayValue, uint.MaxValue / 2);
-            displayValue = Math.Max(displayValue, 7388);
-
-            long rawValue = displayValue * 2;
-
-            int fact = (int)((rawValue + Config.ShPeriod - 1) / Config.ShPeriod);
-            rawValue = fact * Config.ShPeriod;
-
-            displayValue = rawValue / 2;
-
-            txtIcgPeriod.BackColor = Color.White;
-            if (Config.IcgPeriod != (uint)rawValue)
-            {
-                Config.IcgPeriod = (uint)rawValue;
-                Config.Changed = true;
-            }
-            if (txtIcgPeriod.Text != displayValue.ToString())
-            {
-                txtIcgPeriod.Text = displayValue.ToString();
-            }
-        }
-
-        private void txtTriggerDelay_TextChanged(object sender, EventArgs e)
-        {
-            bool success = long.TryParse(txtTriggerDelay.Text, out long value);
-
-            if (!success)
-            {
-                txtTriggerDelay.BackColor = Color.Red;
-                return;
-            }
-        }
-
-        private void txtTriggerDelay_KeyDown(object sender, KeyEventArgs e)
-        {
-            if (e.KeyCode != Keys.Enter)
-            {
-                return;
-            }
-            bool success = long.TryParse(txtTriggerDelay.Text, out long value);
-
-            if (!success)
-            {
-                txtTriggerDelay.BackColor = Color.Red;
-                return;
-            }
-
-            value = Math.Min(Math.Max(0, value), 65535);
-
-            txtTriggerDelay.BackColor = Color.White;
-            if (txtTriggerDelay.Text != value.ToString())
-            {
-                txtTriggerDelay.Text = value.ToString();
-            }
-            Config.TriggerDelay = (int)value;
-            Config.Changed = true;
         }
 
         private void btnDark_Click(object sender, EventArgs e)
