@@ -244,7 +244,9 @@ namespace SpectrumPlotter
             // 
             // btnFetch
             // 
-            this.btnFetch.Location = new System.Drawing.Point(127, 8);
+            this.btnFetch.AllowDrop = true;
+            this.btnFetch.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnFetch.Location = new System.Drawing.Point(131, 3);
             this.btnFetch.Margin = new System.Windows.Forms.Padding(4);
             this.btnFetch.Name = "btnFetch";
             this.btnFetch.Size = new System.Drawing.Size(161, 28);
