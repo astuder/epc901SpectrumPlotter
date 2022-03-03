@@ -12,6 +12,10 @@ namespace SpectrumPlotter
     internal class EPC901Camera
     {
         private SerialPort Serial = null;
+
+        private static UInt16 maxPixelValue = 2600;
+        private static UInt16 minPixelValue = 300;
+        private static UInt16 scaleValue = (ushort)(65535 / (maxPixelValue - minPixelValue));
         
         public bool Open(string portName)
         {
@@ -110,7 +114,7 @@ namespace SpectrumPlotter
             int p = 0;
             for (int i = 0; i < pixel_str.Length; i+=3)
             {
-                pixels[p] = (ushort) (16 * Convert.ToUInt16(pixel_str.Substring(i, 3), 16));
+                pixels[p] = (ushort) ((Convert.ToUInt16(pixel_str.Substring(i, 3), 16) - minPixelValue) * scaleValue);
                 p++;
             }
 
