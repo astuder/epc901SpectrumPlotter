@@ -86,6 +86,7 @@
     <Compile Include="NIST\ElementDatabase.cs" />
     <Compile Include="NIST\ElementInfo.cs" />
     <Compile Include="NIST\FetcherLIBS.cs" />
+    <Compile Include="NIST\FetcherLines.cs" />
     <Compile Include="NIST\SpectrumWindow.cs" />
     <Compile Include="ListViewColumnSorter.cs" />
     <Compile Include="MainScreen.cs">

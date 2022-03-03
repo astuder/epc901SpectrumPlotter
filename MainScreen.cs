@@ -52,6 +52,7 @@ namespace SpectrumPlotter
 
         private ConfigFile Config = new ConfigFile();
         private ElementDatabase ElementsLIBS = new ElementDatabase("LIBS");
+        private ElementDatabase ElementsLines = new ElementDatabase("Lines");
         private Dictionary<string, ListViewItem> ElementListMap = new Dictionary<string, ListViewItem>();
         private Dictionary<SignalPlotXY, ListViewItem> CaptureListMap = new Dictionary<SignalPlotXY, ListViewItem>();
         private Dictionary<SignalPlotXY, SpectrumWindow> CapturedPlots = new Dictionary<SignalPlotXY, SpectrumWindow>();
@@ -287,6 +288,19 @@ namespace SpectrumPlotter
                     }
                 }
             }
+            if (cmbDatabase.Text == "Lines")
+            {
+                foreach (var elemInfo in ElementsLines.ElementInfos)
+                {
+                    foreach (var elem in elemInfo.Elements)
+                    {
+                        ListViewItem item = new ListViewItem(new string[] { elem.Name, "" });
+                        lstElementLib.Items.Add(item);
+                        ElementListMap.Add(elem.Name, item);
+                    }
+                }
+            }
+
         }
 
         private async void FormsPlot1_MouseMove(object sender, MouseEventArgs e)
@@ -889,23 +903,48 @@ namespace SpectrumPlotter
                         }));
                     }
 
-                    foreach (ElementInfo info in ElementsLIBS.ElementInfos)
+                    if (cmbDatabase.Text == "LIBS")
                     {
-                        foreach (var elem in info.Elements)
+                        foreach (ElementInfo info in ElementsLIBS.ElementInfos)
                         {
-                            SpectrumWindow[] wins = info.GetWindow(xs, elem.Name);
-
-                            if (wins.Length == 1)
+                            foreach (var elem in info.Elements)
                             {
-                                double match = 0;
-                                if (wins[0].Intensities.Max() > 0)
+                                SpectrumWindow[] wins = info.GetWindow(xs, elem.Name);
+
+                                if (wins.Length == 1)
                                 {
-                                    match = MatchSignal(ysNormalized, wins[0].IntensitiesNormalized) * 100;
+                                    double match = 0;
+                                    if (wins[0].Intensities.Max() > 0)
+                                    {
+                                        match = MatchSignal(ysNormalized, wins[0].IntensitiesNormalized) * 100;
+                                    }
+                                    BeginInvoke(new Action(() =>
+                                    {
+                                        ElementListMap[elem.Name].SubItems[1].Text = match.ToString("0.0");
+                                    }));
                                 }
-                                BeginInvoke(new Action(() =>
+                            }
+                        }
+                    } else if (cmbDatabase.Text == "Lines")
+                    {
+                        foreach (ElementInfo info in ElementsLines.ElementInfos)
+                        {
+                            foreach (var elem in info.Elements)
+                            {
+                                SpectrumWindow[] wins = info.GetWindow(xs, elem.Name);
+
+                                if (wins.Length == 1)
                                 {
-                                    ElementListMap[elem.Name].SubItems[1].Text = match.ToString("0.0");
-                                }));
+                                    double match = 0;
+                                    if (wins[0].Intensities.Max() > 0)
+                                    {
+                                        match = MatchSignal(ysNormalized, wins[0].IntensitiesNormalized) * 100;
+                                    }
+                                    BeginInvoke(new Action(() =>
+                                    {
+                                        ElementListMap[elem.Name].SubItems[1].Text = match.ToString("0.0");
+                                    }));
+                                }
                             }
                         }
                     }
@@ -987,13 +1026,39 @@ namespace SpectrumPlotter
                     return;
                 }
 
-                ElementInfo info = ElementsLIBS.Get(elem.Text);
+                ElementInfo info = null;
+                if (cmbDatabase.Text == "LIBS")
+                {
+                    info = ElementsLIBS.Get(elem.Text);
+                } else if (cmbDatabase.Text == "Lines")
+                {
+                    info = ElementsLines.Get(elem.Text);
+                }
+
                 if (info == null)
                 {
                     return;
                 }
                 double[] Xs = info.Wavelengths;
                 double[] Ys = info.Elements.Where(el => el.Name == elem.Text).First().IntensitiesNormalized;
+
+                if (cmbDatabase.Text == "Lines")
+                {
+                    double[] newXs = new double[Xs.Length * 3];
+                    double[] newYs = new double[Xs.Length * 3];
+                    int j = 0;
+                    for (int i = 0; i < Xs.Length; i++)
+                    {
+                        newXs[j] = Xs[i];
+                        newYs[j++] = 0;
+                        newXs[j] = Xs[i];
+                        newYs[j++] = Ys[i];
+                        newXs[j] = Xs[i];
+                        newYs[j++] = 0;
+                    }
+                    Xs = newXs;
+                    Ys = newYs;
+                }
 
                 PlotPolygon.Xs = Xs;
                 PlotPolygon.Ys = Ys;
@@ -1040,7 +1105,14 @@ namespace SpectrumPlotter
             string elementName = LastCheckedElement.Text;
 
 
-            ElementInfo info = ElementsLIBS.Get(elementName);
+            ElementInfo info;
+            if (cmbDatabase.Text == "LIBS")
+            {
+                info = ElementsLIBS.Get(elementName);
+            } else
+            {
+                info = ElementsLines.Get(elementName);
+            }
             if (info == null)
             {
                 PlotUpdateAsync = true;
@@ -1048,6 +1120,24 @@ namespace SpectrumPlotter
             }
             double[] Xs = info.Wavelengths;
             double[] Ys = info.Elements.Where(el => el.Name == elementName).First().IntensitiesNormalized;
+
+            if (cmbDatabase.Text == "Lines")
+            {
+                double[] newXs = new double[Xs.Length * 3];
+                double[] newYs = new double[Xs.Length * 3];
+                int j = 0;
+                for (int i = 0; i < Xs.Length; i++)
+                {
+                    newXs[j] = Xs[i];
+                    newYs[j++] = 0;
+                    newXs[j] = Xs[i];
+                    newYs[j++] = Ys[i];
+                    newXs[j] = Xs[i];
+                    newYs[j++] = 0;
+                }
+                Xs = newXs;
+                Ys = newYs;
+            }
 
             PlotSelectedElement.IsVisible = true;
             PlotSelectedElement.Xs = Xs;
@@ -1135,7 +1225,10 @@ namespace SpectrumPlotter
                                 }
                                 break;
                             case "Lines":
-                                // TBD
+                                if (FetcherLines.RequestElement(element))
+                                {
+                                    fetched++;
+                                }
                                 break;
                             default:
                                 break;
@@ -1146,9 +1239,12 @@ namespace SpectrumPlotter
                     BeginInvoke(new Action(() =>
                     {
                         btnFetch.Text = "Fetched " + fetched + "/" + elements.Length;
-                        if (database != "")
+                        if (database == "LIBS")
                         {
-                            ElementsLIBS = new ElementDatabase(database);
+                            ElementsLIBS = new ElementDatabase("LIBS");
+                        } else if (database == "Lines")
+                        {
+                            ElementsLines = new ElementDatabase("Lines");
                         }
                         UpdateElements();
                     }));
@@ -1370,8 +1466,8 @@ namespace SpectrumPlotter
             else
             {
                 btnFetch.Enabled = true;
-                UpdateElements();
             }
+            UpdateElements();
         }
     }
 }
