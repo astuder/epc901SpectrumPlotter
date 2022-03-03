@@ -12,6 +12,7 @@ namespace SpectrumPlotter.NIST
     {
         public static int MinWavelength = 300;
         public static int MaxWavelength = 1100;
+        public static int MinRelIntensity = 100;
         public static int MinTransitionStrength = 1;
         public static int MaxLevel = 2;
      
