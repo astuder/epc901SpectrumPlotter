@@ -238,6 +238,8 @@ namespace SpectrumPlotter
             SpectrumWindow window = JsonConvert.DeserializeObject<SpectrumWindow>(ser);
 
             var plot = formsPlot1.Plot.AddSignalXY(window.Wavelengths, window.Intensities, label: window.Name);
+
+/* doesn't work, loaded captures were invisible
             if (!string.IsNullOrEmpty(window.Color))
             {
                 Color color = plot.Color;
@@ -251,6 +253,8 @@ namespace SpectrumPlotter
                 }
                 plot.Color = color;
             }
+*/
+
             window.Temporary = false;
 
             CapturedPlots.Add(plot, window);
